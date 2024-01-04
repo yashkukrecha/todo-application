@@ -88,30 +88,19 @@ export default function HomePage() {
 
   // Function to toggle the 'finished' status of a task.
   function updateTask(name) {
-    
-    setTasks(
-      tasks.map((task) =>
-        task.name === name ? { ...task, finished: !task.finished } : task
-      )
-    );
-
     // TODO: Support removing/checking off todo items in your todo list through the API.
     // Similar to adding tasks, when checking off a task, you should send a request
     // to the API to update the task's status and then update the state based on the response.
-    tasks.forEach(async (task) => {
-      if (task.finished) {
-        await fetch(`${backend}/${task.id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          "accept": "application/json",
-          "Authorization": `Bearer ${user.accessToken}`
-        }})
-        .then(response => {
-          const unfinished = tasks.filter(task => !task.finished);
-          setTasks(unfinished);
-        })
-      }
+    fetch(`${backend}/${name.id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      "accept": "application/json",
+      "Authorization": `Bearer ${user.accessToken}`
+    }})
+    .then(response => {
+      const unfinished = tasks.filter(task => task.id !== name.id);
+      setTasks(unfinished);
     })
   }
 
@@ -185,7 +174,7 @@ export default function HomePage() {
                 <ListItem
                   key={task.name}
                   dense
-                  onClick={() => updateTask(task.name)}
+                  onClick={() => updateTask(task)}
                 >
                   <Checkbox
                     checked={task.finished}
